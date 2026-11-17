@@ -1,0 +1,27 @@
+=== ENVIRONMENT + IDENTITY EVIDENCE (R2.6) ===
+captured_utc: 2026-11-17T15:47:48Z
+release: M2 CORRECTED R2.6 (baseline R2.5 / commit 7876ef8)
+
+--- versions ---
+psql (PostgreSQL) 17.11 (Debian 17.11-0+deb13u1)
+server_version=17.11 (Debian 17.11-0+deb13u1)  num=170011
+python=3.13.18 fastapi=0.163.1 starlette=1.10.0 sqlalchemy=2.1.9 pytest=9.0.3
+
+--- test database identity ---
+-[ RECORD 1 ]----------------
+database    | sathupally_test
+role        | ssh_app
+server_addr | 127.0.0.1
+server_port | 5432
+
+tables=52
+
+--- alembic ---
+244f672fa5b3 (head)
+<base> -> 244f672fa5b3 (head), initial schema
+
+--- source fingerprints (what this release was tested against) ---
+guards.py            sha256 65c25f9db0af83d53642a1b7ceee454a896e6561d408535940842f2f5e3613db
+test_testdb_guard.py sha256 cf0a66b58f9e0b85bf09204afadc3a1f9a93feaf1316c3ea2ac80186c76469a3
+auth.py              sha256 573098d0085eb02f72073780561e8c1889208d4a9c367ca6b6c9d6d45762bce0
+test count           211 tests collected in 0.62s

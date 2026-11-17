@@ -1,0 +1,28 @@
+=== END-TO-END: fail-closed behaviour on a REAL pytest run (R2.6) ===
+captured_utc: 2026-11-17T15:48:05Z
+
+Scenario A: no application DATABASE_URL anywhere (env unset, backend/.env moved aside).
+Expected: refuse BEFORE any DROP, exit code 2, with the 'NOT configured' reason.
+--- tables BEFORE ---
+tables=52
+! _pytest.outcomes.Exit: REFUSING DESTRUCTIVE TEST DATABASE RESET for URL postgresql+psycopg://ssh_app:***@127.0.0.1:5432/sathupally_test:
+  - the application database is NOT configured (no DATABASE_URL in the environment or backend/.env), so it cannot be proven that the test database is a different database — refusing to destroy anything. Set DATABASE_URL, or create backend/.env from backend/.env.example. !
+1 warning in 0.86s
+PYTEST_EXIT=2
+--- tables AFTER (unchanged: no DROP happened) ---
+tables=52
+
+Scenario B: application DATABASE_URL present but unparseable.
+! _pytest.outcomes.Exit: REFUSING DESTRUCTIVE TEST DATABASE RESET for URL postgresql+psycopg://ssh_app:***@127.0.0.1:5432/sathupally_test:
+  - the configured application DATABASE_URL cannot be parsed, so its database identity is unknown — refusing to destroy anything. Correct DATABASE_URL (check for typos, stray quotes or an unescaped password). The value is not echoed here to avoid leaking credentials. !
+1 warning in 0.79s
+PYTEST_EXIT=2
+
+Scenario C: application DATABASE_URL names no database.
+! _pytest.outcomes.Exit: REFUSING DESTRUCTIVE TEST DATABASE RESET for URL postgresql+psycopg://ssh_app:***@127.0.0.1:5432/sathupally_test:
+  - the configured application DATABASE_URL does not name a database, so its identity is unknown — refusing to destroy anything. !
+1 warning in 0.83s
+PYTEST_EXIT=2
+
+--- tables AFTER all scenarios ---
+tables=52

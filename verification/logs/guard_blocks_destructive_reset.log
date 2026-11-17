@@ -1,0 +1,28 @@
+=== END-TO-END: does the guard actually stop a destructive reset? ===
+captured_utc: 2026-11-17T15:47:57Z
+release: M2 CORRECTED R2.6
+
+Scenario: the test URL and the application URL name the SAME database,
+but use different loopback aliases (127.0.0.1 vs localhost).
+Expected: conftest refuses BEFORE any DROP and exits with code 2.
+
+command: SSH_ALLOW_DESTRUCTIVE_TEST_DB_RESET=1 \
+           DATABASE_URL=postgresql+psycopg://ssh_app:***@localhost:5432/sathupally_test \
+           TEST_DATABASE_URL=postgresql+psycopg://ssh_app:***@127.0.0.1:5432/sathupally_test \
+           python3 -m pytest -o addopts="" -q
+
+--- table count BEFORE the attempted run (must be unchanged after) ---
+tables=52
+
+../../../../usr/local/lib/python3.13/site-packages/fastapi/testclient.py:1
+  /usr/local/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+! _pytest.outcomes.Exit: REFUSING DESTRUCTIVE TEST DATABASE RESET for URL postgresql+psycopg://ssh_app:***@127.0.0.1:5432/sathupally_test:
+  - test URL points at the same host/port/database as the configured application DATABASE_URL — refusing to destroy the application database. (app host 'localhost' and test host '127.0.0.1' are the same server identity 'loopback'.) !
+1 warning in 0.93s
+PYTEST_EXIT=2
+
+--- table count AFTER (proves no DROP occurred) ---
+tables=52
